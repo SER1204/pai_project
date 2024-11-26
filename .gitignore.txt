@@ -1,0 +1,44 @@
+# Fișiere și directoare generale
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.sqlite3
+
+# Fișiere specifice editorului de text/IDE
+.vscode/
+.idea/
+*.swp
+*~
+
+# Fișierele de mediu virtual
+env/
+venv/
+ENV/
+.VENV/
+
+# Fișiere și directoare generate
+*.log
+*.pot
+*.mo
+*.~backup
+*.tmp
+*.bak
+*.orig
+*.save
+
+# Fișiere de configurare sensitive
+.env
+*.env
+
+# Fișiere statice compilate
+staticfiles/
+media/
+
+# Fișierele generate de Django pentru migrații incomplete
+db.sqlite3
+migrations/
+
+# Fișiere și directoare specifice sistemului de operare
+.DS_Store
+Thumbs.db
