@@ -16,3 +16,5 @@ class SensorData(models.Model):
         if SensorData.objects.count() > 10:
             oldest_entry = SensorData.objects.order_by('timestamp').first()  # Get the oldest entry
             oldest_entry.delete()  # Delete the oldest entry
+
+#modificare
