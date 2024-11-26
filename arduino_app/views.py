@@ -1,9 +1,11 @@
-from django.shortcuts import render
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from .models import SensorData
+from .serializers import SensorDataSerializer
 
-def sensor_data_view(request):
-    # Preia toate datele din baza de date și le ordonează după timestamp (descrescător)
-    sensor_data = SensorData.objects.all().order_by('-timestamp')
-    
-    # Transmite datele către șablon
-    return render(request, 'sensor-data.html', {'sensor_data': sensor_data})
+class SensorDataAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        # Fetch the latest 10 records
+        sensor_data = SensorData.objects.all().order_by('-timestamp')[:10]
+        serializer = SensorDataSerializer(sensor_data, many=True)
+        return Response(serializer.data)
