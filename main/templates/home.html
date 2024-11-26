@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Acasă</title>
+</head>
+<body>
+    <h2>Bine ai venit, {{ user.username }}!</h2>
+    <a href="{% url 'logout' %}">Deconectare</a>
+     <a href="{% url 'login' %}">Login</a>
+      <a href="{% url 'register' %}">Register</a>
+      <a href="{% url 'user' %}">Profil</a>
+      <a href="{% url 'dashboard' %}">Dashboard</a>
+</body>
+</html>
