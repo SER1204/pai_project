@@ -30,12 +30,18 @@ while True:
                 # Extrage valoarea potențiometrului
                 potentiometer = int(line.split(":")[1].strip())
 
+            elif line.startswith("Distance:"):
+                # Extrage valoarea distantei
+                distance = float(line.split(":")[1].strip())
                 # Salvează în baza de date doar când avem ambele valori
+                # Verifică dacă valoarea depășește pragul maxim
+    
                 SensorData.objects.create(
                     temperature=temperature,
-                    potentiometer=potentiometer
+                    potentiometer=potentiometer,
+                    distance=distance
                 )
-                print(f"Saved data: Temp={temperature} C, Potentiometer={potentiometer}")
+                print(f"Saved data: Temp={temperature} C, Potentiometer={potentiometer}, Distance={distance}")
 
     except Exception as e:
         print(f"Error reading from Arduino: {e}")

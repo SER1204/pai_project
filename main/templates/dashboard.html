@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Temperatura și LED-uri</title>
+  
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/chartist@0.11.0/dist/chartist.min.css" rel="stylesheet">
@@ -16,74 +16,102 @@
     <div class="sidebar">
       <div class="logo">
         <a href="#" class="simple-text logo-normal">
-          Dashboard Temperatura și LED-uri
+          SiderBar
+    </a>
+  </div>
+  <div class="sidebar-wrapper">
+    <ul class="nav">
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'dashboard' %}">
+          <i class="material-icons">dashboard</i>
+          <p>Dashboard</p>
         </a>
-      </div>
-      <div class="sidebar-wrapper">
-        <ul class="nav">
-          <li class="nav-item">
-            <a class="nav-link" href="index.html">
-              <i class="material-icons">dashboard</i>
-              <p>Dashboard</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="login.html">
-              <i class="material-icons">login</i>
-              <p>Login</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="register.html">
-              <i class="material-icons">person_add</i>
-              <p>Register</p>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'user' %}">
+          <i class="material-icons">person</i>
+          <p>Profil</p>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'logout' %}">
+          <i class="material-icons">logout</i>
+          <p>Deconectare</p>
+        </a>
+      </li>
+      
+      
+    </ul>
+  </div>
+</div>
 
     <div class="main-panel">
       <!-- Navbar -->
       <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top">
         <div class="container-fluid">
           <div class="navbar-wrapper">
-            <a class="navbar-brand" href="javascript:;">Dashboard Temperatura și LED-uri</a>
           </div>
         </div>
       </nav>
 
-      <div class="content">
-        <div class="container-fluid">
-          <!-- Graficul Temperaturii -->
-          <div class="row">
-            <div class="col-lg-12">
-              <div class="card">
-                <div class="card-header card-header-primary">
-                  <h4 class="card-title">Grafic Temperatura</h4>
-                </div>
-                <div class="card-body">
-                  <div id="temperature-chart"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- LED-uri cu Grafice -->
-          <div class="row">
-            <div class="col-md-6">
-              <h5>LED 1</h5>
-              <canvas id="led1-chart" width="400" height="200"></canvas>
-              <p id="led1-status">LED 1 - Stins</p>
-            </div>
-            <div class="col-md-6">
-              <h5>LED 2</h5>
-              <canvas id="led2-chart" width="400" height="200"></canvas>
-              <p id="led2-status">LED 2 - Stins</p>
-            </div>
-          </div>
-        </div>
+      <div class="row">
+  <!-- Secțiune pentru Graficul Temperaturii -->
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header card-header-primary">
+        <h4 class="card-title">Grafic Temperatura</h4>
       </div>
+      <div class="card-body">
+        <!-- Canvas pentru graficul temperaturii -->
+        <canvas id="temperature-chart" width="800" height="400"></canvas>
+      </div>
+    </div>
+  </div>
+
+
+ 
+  <!-- Secțiune pentru Graficul Distantei -->
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header card-header-primary">
+        <h4 class="card-title">Grafic Distanta</h4>
+      </div>
+      <div class="card-body">
+        <!-- Canvas pentru graficul distantei -->
+        <canvas id="distance-chart" width="800" height="400"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <!-- LED-uri cu Grafice -->
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header card-header-info">
+        <h5>LED 1</h5>
+      </div>
+      <div class="card-body">
+        <!-- Canvas pentru LED 1 -->
+        <canvas id="led1-chart" width="400" height="200"></canvas>
+        <p id="led1-status">LED 1 - Stins</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header card-header-warning">
+        <h5>LED 2</h5>
+      </div>
+      <div class="card-body">
+        <!-- Canvas pentru LED 2 -->
+        <canvas id="led2-chart" width="400" height="200"></canvas>
+        <p id="led2-status">LED 2 - Stins</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 
       <!-- Footer -->
       <footer class="footer">
@@ -112,20 +140,77 @@
     let tempData = [];
     let timeData = [];
 
-    // Configurare Chart.js pentru temperatură
-    const tempChart = new Chartist.Line('#temperature-chart', {
-      labels: timeData,
-      series: [tempData]
-    }, {
-      low: 15,
-      high: 30,
-      chartPadding: {
-        top: 0,
-        right: 0,
-        bottom: 0,
-        left: 0
+    // Configurare și actualizare grafic pentru temperatura
+const tempCtx = document.getElementById('temperature-chart').getContext('2d');
+const tempChart = new Chart(tempCtx, {
+  type: 'line',
+  data: {
+    labels: [], // Timpul va fi adăugat dinamic
+    datasets: [{
+      label: 'Temperatură (°C)',
+      data: [],
+      borderColor: 'rgba(75, 192, 192, 1)',
+      backgroundColor: 'rgba(75, 192, 192, 0.2)',
+      fill: true,
+      tension: 0.4 // Linie curbată pentru un aspect fluid
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top'
       },
-      showPoint: true
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            return `${context.raw} °C`;
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: 'Timp'
+        }
+      },
+      y: {
+        min: 15, // Limite minime și maxime pentru temperatură
+        max: 30,
+        title: {
+          display: true,
+          text: 'Temperatură (°C)'
+        }
+      }
+    }
+  }
+});
+
+ // Grafic Distanta
+    const distCtx = document.getElementById('distance-chart').getContext('2d');
+    const distChart = new Chart(distCtx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Distanta (cm)',
+          data: [],
+          borderColor: 'rgba(255, 99, 132, 1)',
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: { title: { display: true, text: 'Timp' } },
+          y: { min: 0, max: 400, title: { display: true, text: 'Distanta (cm)' } }
+        }
+      }
     });
 
     // Creare grafic LED 1
@@ -166,49 +251,88 @@
       }
     });
 
-    // Funcție pentru actualizare LED-uri
-    function updateLeds(potentiometer) {
-      if (potentiometer > 500) {
-        $('#led1-status').text('LED 1 - Aprins');
-        $('#led2-status').text('LED 2 - Stins');
+    // Funcție pentru actualizare LED-uri cu intensitate treptată
+function updateLeds(potentiometer) {
+  // Calculează intensitatea pentru LED 1 și LED 2
+  const led1Intensity = Math.min(100, Math.max(0, (potentiometer / 10)));
+  const led2Intensity = Math.min(100, Math.max(0, ((1023 - potentiometer) / 10)));
 
-        led1Chart.data.datasets[0].data[0] = potentiometer / 10;
-        led2Chart.data.datasets[0].data[0] = 0;
-      } else {
-        $('#led1-status').text('LED 1 - Stins');
-        $('#led2-status').text('LED 2 - Aprins');
+  // Actualizează statusurile LED-urilor
+  $('#led1-status').text(`LED 1 - Intensitate: ${Math.round(led1Intensity)}%`);
+  $('#led2-status').text(`LED 2 - Intensitate: ${Math.round(led2Intensity)}%`);
 
-        led1Chart.data.datasets[0].data[0] = 0;
-        led2Chart.data.datasets[0].data[0] = (1023 - potentiometer) / 10;
+  // Actualizează datele din grafic
+  led1Chart.data.datasets[0].data[0] = led1Intensity;
+  led2Chart.data.datasets[0].data[0] = led2Intensity;
+
+  // Actualizează graficul
+  led1Chart.update();
+  led2Chart.update();
+}
+
+   // Funcție pentru actualizarea graficului de temperatură
+function updateTempChart(temperature, timestamp) {
+  const timeLabel = new Date(timestamp).toLocaleTimeString();
+
+  // Adaugă noile valori
+  tempChart.data.labels.push(timeLabel);
+  tempChart.data.datasets[0].data.push(temperature);
+
+  // Păstrează ultimele 10 valori
+  if (tempChart.data.labels.length > 50) {
+    tempChart.data.labels.shift();
+    tempChart.data.datasets[0].data.shift();
+  }
+
+  tempChart.update();
+}
+ // Funcție pentru actualizarea graficului de distanță
+    function updateDistChart(distance, timestamp) {
+      const timeLabel = new Date(timestamp).toLocaleTimeString();
+      distChart.data.labels.push(timeLabel);
+      distChart.data.datasets[0].data.push(distance);
+      if (distChart.data.labels.length > 50) {
+        distChart.data.labels.shift();
+        distChart.data.datasets[0].data.shift();
       }
-      led1Chart.update();
-      led2Chart.update();
+      distChart.update();
     }
 
-    // Fetch date de la API și actualizare UI
-    function fetchData() {
-      fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-          if (data.length > 0) {
-            const latest = data[0];
-            tempData.push(latest.temperature);
-            timeData.push(new Date(latest.timestamp).toLocaleTimeString());
+// Configurare și actualizare pentru LED-uri
+function updateLeds(potentiometer) {
+  const led1Intensity = Math.min(100, Math.max(0, potentiometer / 10));
+  const led2Intensity = Math.min(100, Math.max(0, (1023 - potentiometer) / 10));
 
-            if (tempData.length > 10) {
-              tempData.shift();
-              timeData.shift();
-            }
-            tempChart.update();
+  // Actualizare status LED-uri
+  $('#led1-status').text(`LED 1 - Intensitate: ${Math.round(led1Intensity)}%`);
+  $('#led2-status').text(`LED 2 - Intensitate: ${Math.round(led2Intensity)}%`);
 
-            updateLeds(latest.potentiometer);
-          }
-        })
-        .catch(error => console.error('Eroare la preluarea datelor:', error));
-    }
+  // Actualizare grafic
+  led1Chart.data.datasets[0].data[0] = led1Intensity;
+  led2Chart.data.datasets[0].data[0] = led2Intensity;
 
-    // Actualizare la fiecare 5 secunde
-    setInterval(fetchData, 2000);
+  led1Chart.update();
+  led2Chart.update();
+}
+
+// Fetch date de la API și actualizare UI
+function fetchData() {
+  fetch(apiUrl)
+    .then(response => response.json())
+    .then(data => {
+      if (data.length > 0) {
+        const latest = data[0];
+        updateTempChart(latest.temperature, latest.timestamp);
+        updateLeds(latest.potentiometer);
+        updateDistChart(latest.distance, latest.timestamp); // Adăugat pentru distanță
+      }
+    })
+    .catch(error => console.error('Eroare la preluarea datelor:', error));
+    console.log('Date API:', data);
+}
+
+// Actualizare la fiecare 5 secunde
+setInterval(fetchData, 1000);
   </script>
 </body>
 

@@ -4,4 +4,4 @@ from .models import SensorData
 class SensorDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = SensorData
-        fields = ['temperature', 'potentiometer', 'timestamp']
+        fields = ['temperature', 'potentiometer', 'timestamp', 'distance']
